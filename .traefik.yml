@@ -3,11 +3,11 @@ type: middleware
 
 import: github.com/team-carepay/traefik-opa-plugin
 
-summary: Traefik middleware plugin which forwards the request data (headers and URL) to Open Policy Agent, which can be used to stop the request
+summary: Traefik middleware plugin which forwards the request data (method, path, parameters and headers) to Open Policy Agent, which can be used to allow/deny the request
 
 iconPath: images/logo-white.png
 bannerPath: images/logo-white.png
 
 testData:
-  OpaUrl: http://localhost/v1/data/example
-  Field: allow
+  URL: http://localhost/v1/data/example
+  AllowField: allow
