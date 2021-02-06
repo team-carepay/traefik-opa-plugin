@@ -12,8 +12,8 @@ import (
 
 // Config the plugin configuration.
 type Config struct {
-	OpaURL string `json:"opa-url,omitempty"`
-	Field  string `json:"field,omitempty"`
+	URL        string `json:"url,omitempty"`
+	AllowField string `json:"allow-field,omitempty"`
 }
 
 // CreateConfig creates a new OPA Config
@@ -23,9 +23,9 @@ func CreateConfig() *Config {
 
 // Opa contains the runtime config
 type Opa struct {
-	next  http.Handler
-	url   string
-	field string
+	next       http.Handler
+	url        string
+	allowField string
 }
 
 // PayloadInput is the input payload
@@ -50,9 +50,9 @@ type Response struct {
 // New creates a new plugin
 func New(ctx context.Context, next http.Handler, config *Config, name string) (http.Handler, error) {
 	return &Opa{
-		next:  next,
-		url:   config.OpaURL,
-		field: config.Field,
+		next:       next,
+		url:        config.URL,
+		allowField: config.AllowField,
 	}, nil
 }
 
@@ -67,7 +67,7 @@ func (opaConfig *Opa) ServeHTTP(rw http.ResponseWriter, request *http.Request) {
 				err := json.Unmarshal(body, &result)
 				if err == nil {
 					var allow bool
-					err := json.Unmarshal(result.Result[opaConfig.field], &allow)
+					err := json.Unmarshal(result.Result[opaConfig.allowField], &allow)
 					if err == nil {
 						if allow == true {
 							opaConfig.next.ServeHTTP(rw, request)

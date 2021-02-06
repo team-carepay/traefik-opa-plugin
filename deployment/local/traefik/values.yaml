@@ -1,0 +1,17 @@
+ports:
+  traefik:
+    hostPort: 9000
+  web:
+    hostPort: 80
+
+pilot:
+  enabled: true
+  token: xxxx-xxxx-xxx-xxxx-xxxxx
+
+experimental:
+  plugins:
+    enabled: true
+
+additionalArguments:
+- --experimental.plugins.opa.moduleName=github.com/team-carepay/traefik-opa-plugin
+- --experimental.plugins.opa.version=v0.0.3

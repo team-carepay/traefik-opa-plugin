@@ -25,8 +25,8 @@ func TestServeHTTPOK(t *testing.T) {
 	}))
 	defer ts.Close()
 	cfg := traefik_opa_plugin.CreateConfig()
-	cfg.OpaURL = fmt.Sprintf("%s/v1/data/testok?Param1=foo&Param1=bar", ts.URL)
-	cfg.Field = "allow"
+	cfg.URL = fmt.Sprintf("%s/v1/data/testok?Param1=foo&Param1=bar", ts.URL)
+	cfg.AllowField = "allow"
 	ctx := context.Background()
 	nextCalled := false
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) { nextCalled = true })
@@ -60,8 +60,8 @@ func TestServeHTTPForbidden(t *testing.T) {
 	}))
 	defer ts.Close()
 	cfg := traefik_opa_plugin.CreateConfig()
-	cfg.OpaURL = ts.URL
-	cfg.Field = "allow"
+	cfg.URL = ts.URL
+	cfg.AllowField = "allow"
 	ctx := context.Background()
 	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) { t.Fatal("Should not chain HTTP call") })
 

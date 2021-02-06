@@ -1,0 +1,9 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: opa
+spec:
+  plugin:
+    opa:
+      URL: http://opa:8181/v1/data/example
+      AllowField: allow

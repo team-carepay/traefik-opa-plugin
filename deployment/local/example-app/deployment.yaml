@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podinfo-test-server
+  labels:
+    app: test-server
+spec:
+  selector:
+    matchLabels:
+      app: test-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: test-server
+      name: test-server
+    spec:
+      containers:
+      - name: podinfo
+        image: mendhak/http-https-echo:17
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        env:
+        - name: JWT_HEADER
+          value: Authorization
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
