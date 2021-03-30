@@ -3,19 +3,7 @@ Traefik plugin which connects to Open Policy Agent
 
 This plugin can be used to validate requests before they reach the backend. The Open Policy Agent is a server which can be used to enforce any policy. Although OPA is a swiss army-knife, in this use-case we're going to use it to verify that a user has the required permissions to access the backend resource.
 
-```puml
-@startuml
-actor User
-User -right-> [LoadBalancer]
-User <-right- [LoadBalancer]
-[LoadBalancer] -right-> [Traefik]
-[LoadBalancer] <-right- [Traefik]
-[Traefik] -down-> [OPA]
-[Traefik] <-down- [OPA]
-[Traefik] -right-> [MicroService]
-[Traefik] <-right- [MicroService]
-@enduml
-```
+![Traefic OPA plugin](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/team-carepay/traefik-opa-plugin/main/diagram.puml)
 
 ## Installation
 The plugin needs to be configured in the Traefik static configuration before it can be used.

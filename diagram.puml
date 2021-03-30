@@ -1,0 +1,13 @@
+@startuml
+
+actor User
+User -right-> [LoadBalancer]
+User <-right- [LoadBalancer]
+[LoadBalancer] -right-> [Traefik]
+[LoadBalancer] <-right- [Traefik]
+[Traefik] -down-> [OPA]
+[Traefik] <-down- [OPA]
+[Traefik] -right-> [MicroService]
+[Traefik] <-right- [MicroService]
+
+@enduml
