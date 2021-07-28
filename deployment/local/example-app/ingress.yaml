@@ -1,5 +1,5 @@
 
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: test-server
@@ -7,7 +7,7 @@ metadata:
     app: test-server
   annotations:
     kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/router.middlewares: default-opa@kubernetescrd
+#    traefik.ingress.kubernetes.io/router.middlewares: default-opa@kubernetescrd
 spec:
   rules:
   - http:

@@ -83,3 +83,34 @@ func TestServeHTTPForbidden(t *testing.T) {
 		t.Fatal("Exptected Forbidden")
 	}
 }
+
+func TestServeHTTPEmpty(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "{}")
+	}))
+	defer ts.Close()
+	cfg := traefik_opa_plugin.CreateConfig()
+	cfg.URL = ts.URL
+	cfg.AllowField = "allow"
+	ctx := context.Background()
+	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) { t.Fatal("Should not chain HTTP call") })
+
+	opa, err := traefik_opa_plugin.New(ctx, next, cfg, "test-traefik-opa-plugin")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	recorder := httptest.NewRecorder()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	opa.ServeHTTP(recorder, req)
+
+	if recorder.Code != http.StatusInternalServerError {
+		t.Fatal("Exptected InternalServerError")
+	}
+}

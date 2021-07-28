@@ -6,7 +6,7 @@ ports:
 
 pilot:
   enabled: true
-  token: xxxx-xxxx-xxx-xxxx-xxxxx
+  token: f82daf08-39a8-43df-a771-157d2e63101f
 
 experimental:
   plugins:

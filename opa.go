@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -57,31 +58,47 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 }
 
 func (opaConfig *Opa) ServeHTTP(rw http.ResponseWriter, request *http.Request) {
-	authPayloadAsJSON, err := json.Marshal(toOPAPayload(request))
-	if err == nil {
-		authResponse, err := http.Post(opaConfig.url, "application/json", bytes.NewBuffer(authPayloadAsJSON))
-		if err == nil {
-			body, err := ioutil.ReadAll(authResponse.Body)
-			if err == nil {
-				var result Response
-				err := json.Unmarshal(body, &result)
-				if err == nil {
-					var allow bool
-					err := json.Unmarshal(result.Result[opaConfig.allowField], &allow)
-					if err == nil {
-						if allow == true {
-							opaConfig.next.ServeHTTP(rw, request)
-						} else {
-							rw.WriteHeader(http.StatusForbidden)
-							rw.Write([]byte(body))
-						}
-						return
-					}
-				}
-			}
-		}
+	err := opaConfig.ServeHTTPInternal(rw, request)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 	}
-	http.Error(rw, err.Error(), http.StatusInternalServerError)
+}
+
+func (opaConfig *Opa) ServeHTTPInternal(rw http.ResponseWriter, request *http.Request) error {
+	authPayloadAsJSON, err := json.Marshal(toOPAPayload(request))
+	if err != nil {
+		return err
+	}
+	authResponse, err := http.Post(opaConfig.url, "application/json", bytes.NewBuffer(authPayloadAsJSON))
+	if err != nil {
+		return err
+	}
+	body, err := ioutil.ReadAll(authResponse.Body)
+	if err != nil {
+		return err
+	}
+	var result Response
+	if err = json.Unmarshal(body, &result); err != nil {
+		return err
+	}
+	if len(result.Result) == 0 {
+		return fmt.Errorf("OPA result invalid")
+	}
+	fieldResult, ok := result.Result[opaConfig.allowField]
+	if !ok {
+		return fmt.Errorf("OPA result missing: %v", opaConfig.allowField)
+	}
+	var allow bool
+	if err = json.Unmarshal(fieldResult, &allow); err != nil {
+		return err
+	}
+	if allow == true {
+		opaConfig.next.ServeHTTP(rw, request)
+	} else {
+		rw.WriteHeader(http.StatusForbidden)
+		rw.Write([]byte(body))
+	}
+	return nil
 }
 
 func toOPAPayload(request *http.Request) *Payload {
