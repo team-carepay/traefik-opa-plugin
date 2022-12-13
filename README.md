@@ -1,6 +1,10 @@
 # traefik-opa-plugin ![Build](https://github.com/team-carepay/traefik-opa-plugin/workflows/build/badge.svg)
 Traefik plugin which connects to Open Policy Agent
 
+# !!! IMPORTANT NOTE: this repo is now deprecated in favor of https://github.com/team-carepay/traefik-jwt-plugin !!!
+
+
+
 This plugin can be used to validate requests before they reach the backend. The Open Policy Agent is a server which can be used to enforce any policy. Although OPA is a swiss army-knife, in this use-case we're going to use it to verify that a user has the required permissions to access the backend resource.
 
 ```puml
